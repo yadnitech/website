@@ -1,0 +1,81 @@
+
+/*  General Styling
+/*-----------------------------------------------------------------------------------*/
+html { overflow:auto; }
+
+body {
+  background: #ffffff;
+  color: #898989;
+  font-family: 'Poppins', helvetica;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5rem;
+  letter-spacing: 0.02rem;
+}
+
+.jumbotron{
+  background-image: url(../images/stock-bg.jpg);
+  color: white;
+}
+
+
+/*-----------------------------------------------------------------------------------*/
+/*  Footer
+/*-----------------------------------------------------------------------------------*/
+
+.footer {
+  margin-top: 2rem;
+}
+
+.footer p {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  Responsive
+/*-----------------------------------------------------------------------------------*/
+
+  /* large display screen */
+  @media screen and (max-width:8000px) {
+    .floating-down-button{
+      position: absolute;
+      top: 4rem; 
+      right: 15%;
+    }
+  }
+
+  /* small display screen */
+  @media screen and (max-width:1199px) {
+    .floating-down-button{
+      position: absolute;
+      top: 5rem; 
+      right: 12%;
+    }
+  }
+
+  /* tab screen */
+  @media screen and (max-width: 767px) {
+    .floating-down-button{
+      position: absolute;
+      top: 5rem; 
+      right: 12%;
+    }
+  }
+  
+  /* mobile screen */
+  @media screen and (max-width: 375px) {
+    .jumbotron .display-3{
+      font-size: 2.5rem;
+      font-weight: 300;
+      line-height: 1.2;
+    }
+    .floating-down-button{
+      position: absolute;
+      top: 5rem; 
+      right: 5%;
+    }
+  }

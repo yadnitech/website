@@ -85,30 +85,33 @@
       </div>
     </nav>
 
-    <main role="main">
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <div class="container">
-          <h1 class="display-3">Welcome to Yadnitech!</h1>
-          <p>We help you to learn share market.</p>
-          <p><a class="btn btn-primary btn-lg" href="/articles.html" role="button">Learn more &raquo;</a></p>
+    <div class="floating-down-button">
+      <a class="btn btn-secondary" href="#pagination">&darr;</a>
+    </div>
+    <!-- /container -->
+    <div class="container mt-2">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Recent Articles</h2>
+        </div>
+        <div class="col-md-6">
+          <select style="float: right;" id="limit" onchange="loadArticleData(0)">
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
         </div>
       </div>
-    </main>
-
-
-    <!-- /container -->
-    <div class="container">
-      <h2>Recent Articles</h2>
       <hr />
       <!-- Articles -->
       <div id="recent-articles">
       </div>
     
 
-    <div class="row py-3 mt-5 mb-10 text-justify bg-white rounded">
-      <div class="col">
-        <a class="btn btn-outline-primary" style="float: right;" href="/articles.html">View All</a>
+    <div class="row py-3 mt-5 mb-10 text-justify bg-white rounded" id="pagination">
+      <div class="col text-center">
+        <button class="btn btn-outline-primary" style="float: left;" id="loadPrevButton" onclick="loadPrev()">Prev</button>
+        <span id="pagingStatus"></span>
+        <button class="btn btn-outline-primary" style="float: right;" id="loadNextButton" onclick="loadNext()">Next</button>
       </div>
     </div>
   
@@ -126,10 +129,26 @@
 </body>
 
   <script type="text/javascript">
-
+  
+    var totalArticlesCount=0,skip=0; 
       window.onload = function() {
+        setArticlesCount();
         loadArticleData();
       };
+
+      async function setArticlesCount(){
+        // API call to count all articles
+        await fetch('https://yadnitech-api-service.herokuapp.com/total-articles/count').then(res => res.json()).then(
+            (result) => {
+                //set return data into articlesData object
+                if (result.success) {
+                    totalArticlesCount = result.res.count;
+                } else {
+                    toast.error('Error while loading articles!');
+                }
+            }
+        )
+    }
 
     // load articles
     async function loadArticleData(){
@@ -138,14 +157,29 @@
                             <div class="spinner-border" role="status">
                               <span class="sr-only">Loading...</span>
                             </div>
-                          </div>`;
-      await fetch('https://yadnitech-api-service.herokuapp.com/get-all-articles?filter={"offset": 0,"limit": 5,"skip": 0,"order": "LastUpdate DESC","where": {"additionalProp1": {}},"fields": {"Name": true,"id": true,"Description": true,"CreatedDate": true,"Icon": true}}').then(res => res.json()).then(
+                          </div>`; 
+      await fetch('https://yadnitech-api-service.herokuapp.com/get-all-articles?filter={"offset": 0,"limit": '+document.getElementById("limit").value+',"skip": '+skip+',"order": "LastUpdate DESC","where": {"additionalProp1": {}},"fields": {"Name": true,"id": true,"Description": true,"CreatedDate": true,"Icon": true}}').then(res => res.json()).then(
             (result) => {
                 //set return data into articlesData object
                 if (result.success) {
                     if (result.res.length < 1)
                         alert("No data found");
                     setArticlesData(result.res);
+
+                    //update pagination data
+                    let lastValue=(skip+parseInt(document.getElementById("limit").value));
+                    document.getElementById("pagingStatus").innerHTML=skip+"-"+(lastValue>totalArticlesCount?totalArticlesCount:lastValue)+" of "+totalArticlesCount;
+
+                    //disable buttons
+                    if(skip==0)
+                      document.getElementById("loadPrevButton").disabled= true;
+                    else
+                      document.getElementById("loadPrevButton").disabled= false;
+                    if(lastValue>totalArticlesCount)
+                      document.getElementById("loadNextButton").disabled= true;
+                    else
+                      document.getElementById("loadNextButton").disabled= false;
+                    
                 } else {
                   alert('Error while loading articles!');
                 }
@@ -154,7 +188,7 @@
     }
 
     function setArticlesData(data){
-      document.getElementById("recent-articles").innerHTML="";
+      document.getElementById("recent-articles").innerHTML=""; 
       data.forEach(element => {
         const div = document.createElement('div');
         div.className = 'row shadow-lg py-3 mb-3 text-justify bg-white rounded';
@@ -187,6 +221,18 @@
       } 
       return temp.innerText.substr(0, length) + "......................";
   }
+  
+    function loadPrev(){
+      skip=skip-document.getElementById("limit").value;
+      loadArticleData();
+    }
+
+    function loadNext(){
+      skip=skip+parseInt(document.getElementById("limit").value);
+      console.log(skip)
+      loadArticleData();
+    }
+
 
   </script>
 
