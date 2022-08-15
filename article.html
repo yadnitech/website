@@ -130,7 +130,11 @@
                         alert("No data found");
                     setArticlesData(result.res);
                 } else {
-                  alert('Error while loading articles!');
+                  alert('Articles not found!');
+                  document.getElementById("article-data").innerHTML=`
+                                      <div class="d-flex justify-content-center">
+                                        <a href="/">back</a>
+                                      </div>`;
                 }
             }
         )
